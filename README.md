@@ -19,4 +19,4 @@ Planet Explorer is a simple React + TypeScript application that lists planets in
 npm run build
 ```
 
-The app fetches planets from [Solar System OpenData API](https://api.le-systeme-solaire.net/) and Mars weather data from [MAAS2](https://maas2.apollorion.com/).
+The app fetches planets from [Solar System OpenData API](https://api.le-systeme-solaire.net/) and Mars weather data from NASA's [MSL Weather Service](https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json). Planet images are loaded from NASA's public domain galleries.
