@@ -3,6 +3,7 @@ export interface Planet {
   englishName: string;
   gravity: number;
   meanRadius: number;
+  semimajorAxis: number;
   moons?: { moon: string }[];
 }
 
