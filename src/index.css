@@ -1,0 +1,92 @@
+:root {
+  --bg-color: #f8f8f8;
+  --text-color: #111;
+  --card-bg: #fff;
+  --accent-color: #ff0066;
+}
+
+[data-theme='dark'] {
+  --bg-color: radial-gradient(circle at 20% 20%, #232323, #000);
+  --text-color: #e8e8e8;
+  --card-bg: #1e1e1e;
+  --accent-color: #ff0066;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Orbitron', Arial, Helvetica, sans-serif;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+.app-header {
+  text-align: center;
+  padding: 1rem;
+}
+
+.theme-toggle {
+  margin-left: 1rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.planet-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0;
+  gap: 1rem;
+}
+
+.planet-item {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--card-bg);
+  transition: transform 0.2s, background 0.3s;
+  text-align: center;
+  width: 90px;
+}
+
+.planet-item:hover {
+  transform: translateY(-4px);
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.planet-item.selected {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.planet-item img {
+  width: 48px;
+  height: 48px;
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.planet-details {
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.planet-details img {
+  width: 150px;
+  height: 150px;
+  display: block;
+  margin: 0 auto 1rem;
+}
