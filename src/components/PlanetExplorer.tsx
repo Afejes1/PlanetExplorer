@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Planet, MarsWeather } from '../types';
+import { PLANET_ORDER, PLANET_IMAGES, PLANET_FACTS } from '../planetData';
 
 const PLANETS_URL = 'https://api.le-systeme-solaire.net/rest/bodies?filter%5BisPlanet%5D=1';
-const MARS_WEATHER_URL = 'https://api.maas2.apollorion.com/';
+const MARS_WEATHER_URL =
+  'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 
 const PlanetExplorer: React.FC = () => {
   const [planets, setPlanets] = useState<Planet[]>([]);
@@ -13,7 +15,12 @@ const PlanetExplorer: React.FC = () => {
   useEffect(() => {
     fetch(PLANETS_URL)
       .then(res => res.json())
-      .then(data => setPlanets(data.bodies))
+      .then(data => {
+        const ordered = PLANET_ORDER.map(name =>
+          data.bodies.find((b: Planet) => b.englishName === name)
+        ).filter(Boolean) as Planet[];
+        setPlanets(ordered);
+      })
       .catch(err => console.error(err));
   }, []);
 
@@ -24,7 +31,25 @@ const PlanetExplorer: React.FC = () => {
       fetch(MARS_WEATHER_URL)
         .then(res => res.json())
         .then(data => {
-          setMarsWeather(data); // data is the latest weather
+          // API returns an array of sols under `soles` or a `sol_keys` map
+          let latest: any = null;
+          if (Array.isArray(data.soles)) {
+            latest = data.soles[0];
+          } else if (Array.isArray(data.sol_keys) && data.sol_keys.length > 0) {
+            const key = data.sol_keys[0];
+            latest = { sol: key, ...data[key] };
+          }
+          if (latest) {
+            setMarsWeather({
+              sol: String(latest.sol),
+              terrestrial_date:
+                latest.terrestrial_date || latest.First_UTC || '',
+              min_temp: latest.min_temp ?? latest.AT?.mn ?? 0,
+              max_temp: latest.max_temp ?? latest.AT?.mx ?? 0,
+            });
+          } else {
+            setMarsWeather(null);
+          }
         })
         .catch(err => console.error(err))
         .finally(() => setLoading(false));
@@ -37,7 +62,8 @@ const PlanetExplorer: React.FC = () => {
     <div>
       <ul>
         {planets.map(p => (
-          <li key={p.id} onClick={() => selectPlanet(p)} style={{ cursor: 'pointer' }}>
+          <li key={p.id} onClick={() => selectPlanet(p)} style={{ cursor: 'pointer', listStyle: 'none', marginBottom: '8px' }}>
+            <img src={PLANET_IMAGES[p.englishName]} alt={p.englishName} width={32} height={32} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
             {p.englishName}
           </li>
         ))}
@@ -45,8 +71,11 @@ const PlanetExplorer: React.FC = () => {
       {selectedPlanet && (
         <div>
           <h2>{selectedPlanet.englishName}</h2>
+          <img src={PLANET_IMAGES[selectedPlanet.englishName]} alt={selectedPlanet.englishName} width={200} height={200} />
+          <p>{PLANET_FACTS[selectedPlanet.englishName]}</p>
           <p>Gravity: {selectedPlanet.gravity} m/s²</p>
           <p>Mean Radius: {selectedPlanet.meanRadius} km</p>
+          <p>Distance from Sun: {selectedPlanet.semimajorAxis} km</p>
           <p>Moons: {selectedPlanet.moons ? selectedPlanet.moons.length : 0}</p>
           {selectedPlanet.englishName.toLowerCase() === 'mars' && (
             <div>
